@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <iomanip>
 
 using namespace std; // Adding the 'using namespace std;'
 
@@ -151,7 +152,7 @@ bool isDuplicate(const vector<NutrientsInfo>& data, const NutrientsInfo& info) {
 
 int main() {
     // Open the CSV file
-    ifstream file("D:\\yyun\\Documents\\GitHub\\DSLTR\\GroupAssignment - Cleaning\\Nutrients_Info.csv");
+    ifstream file("C:\\Users\\Natalie\\OneDrive - Asia Pacific University\\Documents\\APU\\Y2S2\\DSTR (C++)\\ASMT\\DSLTR\\GroupAssignment - Cleaning\\Nutrients_Info.csv");
 
     if (!file.is_open()) {
         cout << "Error opening file!" << endl;
@@ -205,16 +206,25 @@ int main() {
     cleanData(uniqueData);
 
     // Print headers
-    cout << "Headers: ";
+    //cout << "Headers: ";
+    int i = 0;
     for (const auto& header : headers) {
-        cout << header << " \t";
+        if (i == 0) {
+            cout << setw(40) << left << header;
+            i++;
+        }
+        else{
+            cout << setw(10) << left << header;
+            i++;
+        }
+        
     }
     cout << endl;
 
     // Displaying the parsed data
     for (const auto& info : uniqueData) {
         //cout << "Food: " << info.food << ", Measure: " << info.measure << ", Grams: " << info.grams << ", Calories: " << info.calories << ", Protein: " << info.protein << ", Fat: " << info.fat << ", SatFat: " << info.satFat << ", Fiber: " << info.fiber << ", Carbs: " << info.carbs << ", Category: " << info.category << endl;
-        cout << info.food << "\t" << info.measure << "\t" << info.grams << "\t" << info.calories << "\t" << info.protein << "\t" << info.fat << "\t" << info.satFat << "\t" << info.fiber << "\t" << info.carbs << "\t" << info.category << endl;
+        cout << setw(40) << left << info.food << setw(10) << left << info.measure << setw(10) << left << info.grams << setw(10) << left << info.calories << setw(10) << left << info.protein << setw(10) << left << info.fat << setw(10) << left << info.satFat << setw(10) << left << info.fiber << setw(10) << left << info.carbs << setw(10) << left << info.category << endl;
 
     }
 
