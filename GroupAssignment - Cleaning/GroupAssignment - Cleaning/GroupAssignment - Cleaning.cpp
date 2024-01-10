@@ -9,6 +9,65 @@
 
 using namespace std; // Adding the 'using namespace std;'
 
+struct NutrientsInfo
+{
+    string food;
+    string measure;
+    double grams;
+    double calories;
+    double protein;
+    double fat;
+    double satFat;
+    double fiber;
+    double carbs;
+    string category;
+};
+
+double cleanAndConvertToDouble(const string& str) {
+    if (str.empty() || str == "t" || str == "a")
+    {
+        return 0.0; // Handle empty or special cases
+    }
+    else if (str.find('/') != string::npos || isalpha(str[0])) { // Check for '/' or an alphabetical character
+        return -1.0; // Return a default value for dates or non-numeric values
+    }
+    else {
+        try {
+            string cleanedStr = str;
+            cleanedStr.erase(remove(cleanedStr.begin(), cleanedStr.end(), ','), cleanedStr.end());
+            cleanedStr.erase(remove(cleanedStr.begin(), cleanedStr.end(), '"'), cleanedStr.end()); // cus got "1,419"
+            return stod(cleanedStr);
+        }
+        catch (const invalid_argument& e) {
+            cerr << "Invalid argument: " << e.what() << '\n';
+            // Handle the error, e.g., return a default value or rethrow
+            return 0.0;
+        }
+        catch (const out_of_range& e) {
+            cerr << "Out of range: " << e.what() << '\n';
+            // Handle the error
+            return 0.0;
+        }
+    }
+}
+
+NutrientsInfo parseNutrientsInfo(const vector<string>& tokens) {
+    NutrientsInfo info;
+    if (tokens.size() >= 10) {
+        info.food = tokens[0];
+        info.measure = tokens[1];
+        info.grams = cleanAndConvertToDouble(tokens[2]);
+        info.calories = cleanAndConvertToDouble(tokens[3]);
+        info.protein = cleanAndConvertToDouble(tokens[4]);
+        info.fat = cleanAndConvertToDouble(tokens[5]);
+        info.satFat = cleanAndConvertToDouble(tokens[6]);
+        info.fiber = cleanAndConvertToDouble(tokens[7]);
+        info.carbs = cleanAndConvertToDouble(tokens[8]);
+        info.category = tokens[9];
+    }
+    return info;
+}
+
 // Function to split a string based on a delimiter, handling quoted strings
 vector<string> splitCSV(const string& s, char delimiter) {
     vector<string> tokens;
@@ -39,20 +98,8 @@ vector<string> splitCSV(const string& s, char delimiter) {
             tokens.push_back(token);
         }
     }
-
     return tokens;
 }
-
-// Function to split a string based on a delimiter
-/*vector<string> split(const string& s, char delimiter) {
-    vector<string> tokens;
-    stringstream ss(s);
-    string token;
-    while (getline(ss, token, delimiter)) {
-        tokens.push_back(token);
-    }
-    return tokens;
-}*/
 
 // Function to remove leading and trailing spaces from strings
 void trimSpaces(vector<string>& tokens) {
@@ -68,42 +115,38 @@ void trimSpaces(vector<string>& tokens) {
     }
 }
 
+
+
 // Function to perform data cleaning operations
-void cleanData(vector<vector<string>>& data) {
+void cleanData(vector<NutrientsInfo>& data) {
     // Remove leading and trailing spaces from all strings
-    for (auto& row : data) {
-        for (auto& cell : row) { //not call function cuz different argument,this is string
-            size_t start = cell.find_first_not_of(" \t");
-            size_t end = cell.find_last_not_of(" \t");
-            if (start != string::npos && end != string::npos) {
-                cell = cell.substr(start, end - start + 1);
-            }
-            else {
-                cell.clear(); // Remove the entire string if it only contains spaces
-            }
-        }
+    for (auto& entry : data) {
+        entry.food.erase(remove(entry.food.begin(), entry.food.end(), ' '), entry.food.end());
+        entry.measure.erase(remove(entry.measure.begin(), entry.measure.end(), ' '), entry.measure.end());
+        entry.category.erase(remove(entry.category.begin(), entry.category.end(), ' '), entry.category.end());
     }
 
     // Remove rows with missing values (empty strings)
     data.erase(remove_if(data.begin(), data.end(),
-        [](const vector<string>& row) {
-            return any_of(row.begin(), row.end(), [](const string& cell) {
-                return cell.empty();
-                });
+        [](const NutrientsInfo& entry) {
+            return (entry.food.empty() || entry.measure.empty() || entry.category.empty());
         }),
         data.end());
 
     // Convert all text to lowercase
-    for (auto& row : data) {
-        for (auto& cell : row) {
-            transform(cell.begin(), cell.end(), cell.begin(), ::tolower);
-        }
+    for (auto& entry : data) {
+        transform(entry.food.begin(), entry.food.end(), entry.food.begin(), ::tolower);
+        transform(entry.measure.begin(), entry.measure.end(), entry.measure.begin(), ::tolower);
+        transform(entry.category.begin(), entry.category.end(), entry.category.begin(), ::tolower);
     }
 }
 
 // Function to check if a row already exists in the dataset
-bool isDuplicate(const vector<vector<string>>& data, const vector<string>& row) {
-    return find(data.begin(), data.end(), row) != data.end();
+bool isDuplicate(const vector<NutrientsInfo>& data, const NutrientsInfo& info) {
+    return find_if(data.begin(), data.end(),
+        [&info](const NutrientsInfo& entry) {
+            return (entry.food == info.food && entry.measure == info.measure);
+        }) != data.end();
 }
 
 int main() {
@@ -116,42 +159,69 @@ int main() {
     }
 
     string line;
-    vector<vector<string>> originalData;
-    vector<vector<string>> uniqueData;
+    vector<NutrientsInfo> originalData;
+    vector<NutrientsInfo> uniqueData;
+    vector<string> headers; // Store headers separately
+
+    // Read the headers
+    if (getline(file, line)) {
+        stringstream ss(line);
+        string header;
+
+        while (getline(ss, header, ',')) {
+            headers.push_back(header);
+        }
+    }
+    else {
+        cout << "Empty file or unable to read headers!" << endl;
+        return 1;
+    }
 
     while (getline(file, line)) {
+        
         vector<string> tokens = splitCSV(line, ',');
 
+        // Parse NutrientsInfo
+        NutrientsInfo info = parseNutrientsInfo(tokens);
+
         // Check if the row is unique before adding it to uniqueData
-        if (!isDuplicate(uniqueData, tokens)) {
-            uniqueData.push_back(tokens);
+        if (!isDuplicate(originalData, info)) {
+            uniqueData.push_back(info);
         }
 
         // Always add the row to originalData
-        originalData.push_back(tokens);
+        originalData.push_back(info);
     }
 
-    // Close the file
+    // Check for end-of-file or failure after the loop
+    if (!file.eof() && file.fail()) {
+        cout << "Error"; 
+    }
+
+    //Close the file
     file.close();
 
     // Perform data cleaning operations
     cleanData(uniqueData);
 
-    // Sort uniqueData alphabetically (A-Z)
-    // sort(uniqueData.begin(), uniqueData.end());
+    // Print headers
+    cout << "Headers: ";
+    for (const auto& header : headers) {
+        cout << header << " \t";
+    }
+    cout << endl;
 
-    // Get the total number of lines in uniqueData
-    cout << "Total number of lines in uniqueData: " << uniqueData.size() << endl;
+    // Displaying the parsed data
+    for (const auto& info : uniqueData) {
+        //cout << "Food: " << info.food << ", Measure: " << info.measure << ", Grams: " << info.grams << ", Calories: " << info.calories << ", Protein: " << info.protein << ", Fat: " << info.fat << ", SatFat: " << info.satFat << ", Fiber: " << info.fiber << ", Carbs: " << info.carbs << ", Category: " << info.category << endl;
+        cout << info.food << "\t" << info.measure << "\t" << info.grams << "\t" << info.calories << "\t" << info.protein << "\t" << info.fat << "\t" << info.satFat << "\t" << info.fiber << "\t" << info.carbs << "\t" << info.category << endl;
 
-    // Printing each line stored as an array
-    for (const auto& lineArray : originalData) {
-        int i = 0;
-        for (const auto& token : lineArray) {
-            cout << token << "\t";
-            // Here, you can process the data or store it in arrays as needed
-        }
-        cout << endl;
     }
 
     return 0;
+}
+
+void sortAlphabitically(vector<vector<string>> data) {
+    //Sort uniqueData alphabetically (A-Z)
+    sort(data.begin(), data.end());
 }
