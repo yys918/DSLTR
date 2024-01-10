@@ -108,7 +108,7 @@ bool isDuplicate(const vector<vector<string>>& data, const vector<string>& row) 
 
 int main() {
     // Open the CSV file
-    ifstream file("C:\\Users\\yyun\\OneDrive - Asia Pacific University\\Documents\\Year 2\\Data Structures\\Assignments\\GroupAssignment - Cleaning\\Nutrients_Info.csv");
+    ifstream file("D:\\yyun\\Documents\\GitHub\\DSLTR\\GroupAssignment - Cleaning\\Nutrients_Info.csv");
 
     if (!file.is_open()) {
         cout << "Error opening file!" << endl;
@@ -118,13 +118,6 @@ int main() {
     string line;
     vector<vector<string>> originalData;
     vector<vector<string>> uniqueData;
-    vector<string> headers; // Store headers separately
-
-    // Read the headers
-    /*if (getline(file, line)) {
-        headers = split(line, ',');
-        trimSpaces(headers);
-    }*/
 
     while (getline(file, line)) {
         vector<string> tokens = splitCSV(line, ',');
@@ -146,7 +139,6 @@ int main() {
 
     // Sort uniqueData alphabetically (A-Z)
     // sort(uniqueData.begin(), uniqueData.end());
-    // sort(originalData.begin(), originalData.end());
 
     // Get the total number of lines in uniqueData
     cout << "Total number of lines in uniqueData: " << uniqueData.size() << endl;
@@ -155,9 +147,7 @@ int main() {
     for (const auto& lineArray : originalData) {
         int i = 0;
         for (const auto& token : lineArray) {
-            cout << token << " ";
-            cout << i << " ";
-            i++;
+            cout << token << "\t";
             // Here, you can process the data or store it in arrays as needed
         }
         cout << endl;
