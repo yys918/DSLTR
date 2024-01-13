@@ -1,0 +1,5 @@
+﻿  DSLTR - Array.cpp
+C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - ii\DSLTR - Array\DSLTR - Array.cpp(213,11): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - ii\DSLTR - Array\DSLTR - Array.cpp(290,11): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - ii\DSLTR - Array\DSLTR - Array.cpp(291,12): warning C4101: 'j': unreferenced local variable
+  DSLTR - Array.vcxproj -> C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - ii\x64\Debug\DSLTR - Array.exe

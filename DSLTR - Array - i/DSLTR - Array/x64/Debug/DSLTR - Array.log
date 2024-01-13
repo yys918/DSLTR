@@ -1,1 +1,5 @@
-﻿LINK : fatal error LNK1168: cannot open C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - i\x64\Debug\DSLTR - Array.exe for writing
+﻿  DSLTR - Array.cpp
+C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - i\DSLTR - Array\DSLTR - Array.cpp(179,11): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - i\DSLTR - Array\DSLTR - Array.cpp(257,11): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - i\DSLTR - Array\DSLTR - Array.cpp(259,12): warning C4101: 'j': unreferenced local variable
+LINK : fatal error LNK1168: cannot open C:\Users\Natalie\OneDrive - Asia Pacific University\Documents\APU\Y2S2\DSTR (C++)\ASMT\DSLTR\DSLTR - Array - i\x64\Debug\DSLTR - Array.exe for writing

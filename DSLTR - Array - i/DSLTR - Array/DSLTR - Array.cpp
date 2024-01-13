@@ -177,6 +177,7 @@ void displayData(const vector<string>& headers, const vector<NutrientsInfo>& dat
 // Function to perform selection sort on the vector of NutrientsInfo based on a specified column
 void selectionSort(vector<NutrientsInfo>& data, bool ascending, int column) {
     int n = data.size();
+    cout << n;
 
     for (int i = 0; i < n - 1; i++) {
         int indexToCompare = i;
@@ -255,8 +256,39 @@ void selectionSort(vector<NutrientsInfo>& data, bool ascending, int column) {
 void insertionSort(vector<NutrientsInfo>& data, bool ascending, int column) {
     int n = data.size();
     cout << n;
+    int i, j;
+    string key;
 
-    for (int i = 1; i < n; i++) {
+    /*
+    switch (column) {
+    case 1: //food name
+    case 2: //measure
+    case 3: //grams
+    case 4: //Calories
+    case 5: //protein
+    case 6: //fat
+    case 7: //satfat
+    case 8: //fiber
+    case 9: //carbs
+    case 10: //categories
+    }
+    */
+
+    for (i = 1; i < n; ++i) {
+        key = data[i].food; // 1 hou
+        int j = i - 1; //0 qian
+
+        // Move elements of arr[0..i-1] that are greater than key to one position ahead of their current position
+        while (j >= 0 && data[j].food > key) { // qian > hou
+            data[j + 1].food = data[j].food; // 1 = 0 //qian diu qu hou
+            j = j - 1;//-1
+        }
+
+        data[j + 1].food = key; //hou diu qu qian
+    }
+
+    /*
+    for (int i = 1; i < n - 1; i++) {
         NutrientsInfo key = data[i];
         int j = i - 1;
 
@@ -287,6 +319,7 @@ void insertionSort(vector<NutrientsInfo>& data, bool ascending, int column) {
 
         data[j + 1] = key;
     }
+    */
 }
 
 int main() {
@@ -343,6 +376,8 @@ int main() {
 
     // Perform data cleaning operations
     cleanData(uniqueData);
+
+    //displayData(headers, uniqueData);
 
     int num, column;
     bool ascending;
