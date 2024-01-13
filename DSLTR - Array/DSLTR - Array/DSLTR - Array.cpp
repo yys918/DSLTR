@@ -253,7 +253,7 @@ void selectionSort(vector<NutrientsInfo>& data, bool ascending, int column) {
 
 int main() {
     // Open the CSV file
-    ifstream file("D:\\yyun\\Documents\\GitHub\\DSLTR\\GroupAssignment - Cleaning\\Nutrients_Info.csv");
+    ifstream file("C:\\Users\\Natalie\\OneDrive - Asia Pacific University\\Documents\\APU\\Y2S2\\DSTR (C++)\\ASMT\\Nutrients_Info.csv");
 
     if (!file.is_open()) {
         cout << "Error opening file!" << endl;
