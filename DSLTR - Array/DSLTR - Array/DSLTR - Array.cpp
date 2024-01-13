@@ -150,9 +150,105 @@ bool isDuplicate(const vector<NutrientsInfo>& data, const NutrientsInfo& info) {
         }) != data.end();
 }
 
-void sortAlphabitically(vector<vector<string>> data) {
-    //Sort uniqueData alphabetically (A-Z)
-    sort(data.begin(), data.end());
+void displayData(const vector<string>& headers, const vector<NutrientsInfo>& data) {
+    // Print headers
+    int i = 0;
+    for (const auto& header : headers) {
+        if (i == 0) {
+            cout << setw(40) << left << header;
+            i++;
+        }
+        else {
+            cout << setw(10) << left << header;
+            i++;
+        }
+
+    }
+    cout << endl;
+
+    // Displaying the parsed data
+    for (const auto& info : data) {
+        //cout << "Food: " << info.food << ", Measure: " << info.measure << ", Grams: " << info.grams << ", Calories: " << info.calories << ", Protein: " << info.protein << ", Fat: " << info.fat << ", SatFat: " << info.satFat << ", Fiber: " << info.fiber << ", Carbs: " << info.carbs << ", Category: " << info.category << endl;
+        cout << setw(40) << left << info.food << setw(10) << left << info.measure << setw(10) << left << info.grams << setw(10) << left << info.calories << setw(10) << left << info.protein << setw(10) << left << info.fat << setw(10) << left << info.satFat << setw(10) << left << info.fiber << setw(10) << left << info.carbs << setw(10) << left << info.category << endl;
+
+    }
+}
+
+// Function to perform selection sort on the vector of NutrientsInfo based on a specified column
+void selectionSort(vector<NutrientsInfo>& data, bool ascending, int column) {
+    int n = data.size();
+
+    for (int i = 0; i < n - 1; i++) {
+        int indexToCompare = i;
+        for (int j = i + 1; j < n; j++) {
+            // Compare based on the specified column
+            switch (column) {
+            case 1:  // Sorting based on food name
+                if ((ascending && data[j].food < data[indexToCompare].food) ||
+                    (!ascending && data[j].food > data[indexToCompare].food)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 2:  // Sorting based on measure
+                if ((ascending && data[j].measure < data[indexToCompare].measure) ||
+                    (!ascending && data[j].measure > data[indexToCompare].measure)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 3:  // Sorting based on grams
+                if ((ascending && data[j].grams < data[indexToCompare].grams) ||
+                    (!ascending && data[j].grams > data[indexToCompare].grams)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 4:  // Sorting based on calories
+                if ((ascending && data[j].calories < data[indexToCompare].calories) ||
+                    (!ascending && data[j].calories > data[indexToCompare].calories)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 5:  // Sorting based on protein
+                if ((ascending && data[j].protein < data[indexToCompare].protein) ||
+                    (!ascending && data[j].protein > data[indexToCompare].protein)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 6:  // Sorting based on fat
+                if ((ascending && data[j].fat < data[indexToCompare].fat) ||
+                    (!ascending && data[j].fat > data[indexToCompare].fat)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 7:  // Sorting based on saturated fat
+                if ((ascending && data[j].satFat < data[indexToCompare].satFat) ||
+                    (!ascending && data[j].satFat > data[indexToCompare].satFat)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 8:  // Sorting based on fiber
+                if ((ascending && data[j].fiber < data[indexToCompare].fiber) ||
+                    (!ascending && data[j].fiber > data[indexToCompare].fiber)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 9:  // Sorting based on carbs
+                if ((ascending && data[j].carbs < data[indexToCompare].carbs) ||
+                    (!ascending && data[j].carbs > data[indexToCompare].carbs)) {
+                    indexToCompare = j;
+                }
+                break;
+            case 10: // Sorting based on category
+                if ((ascending && data[j].category < data[indexToCompare].category) ||
+                    (!ascending && data[j].category > data[indexToCompare].category)) {
+                    indexToCompare = j;
+                }
+                break;
+            }
+        }
+
+        // Swap the found element with the first element
+        std::swap(data[indexToCompare], data[i]);
+    }
 }
 
 int main() {
@@ -219,7 +315,7 @@ int main() {
 
     cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. fat\n7. satFat\n8. fiber\n9. carbs\nChoice: ";
     cin >> column;
-    column = column - 1;
+    column = column;
 
     cout << "Enter sorting order\n1. Descending\n2. Ascending\nChoice: ";
     cin >> ascending;
@@ -227,12 +323,7 @@ int main() {
 
     if (num == 1) {
         auto start = high_resolution_clock::now();
-        insertionSort(nutris, 0, index - 1, column, ascending);
 
-
-        for (int i = 0; i < index; ++i) {
-            printNutrient(nutris[i]);
-        }
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop - start);
         cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
@@ -242,29 +333,16 @@ int main() {
     else if (num == 2) {
         auto start = high_resolution_clock::now();
 
-        // Sort the array using selection sort based on the food name
-        selectionSort(nutris, index, column, ascending);
+        selectionSort(uniqueData, ascending, column);
+        displayData(headers, uniqueData);
 
-
-        for (int i = 0; i < index; ++i) {
-            printNutrient(nutris[i]);
-
-        }
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop - start);
         cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
-
     }
 
     else if (num == 3) {
         auto start = high_resolution_clock::now();
-
-        // Sort the array using insertion sort based on the food name 
-        bubbleSort(nutris, index, column, !ascending);
-
-        for (int i = 0; i < index; ++i) {
-            printNutrient(nutris[i]);
-        }
 
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop - start);
@@ -273,29 +351,6 @@ int main() {
 
     else {
         cout << "Please enter a valid input";
-    }
-
-    // Print headers
-    //cout << "Headers: ";
-    int i = 0;
-    for (const auto& header : headers) {
-        if (i == 0) {
-            cout << setw(40) << left << header;
-            i++;
-        }
-        else {
-            cout << setw(10) << left << header;
-            i++;
-        }
-
-    }
-    cout << endl;
-
-    // Displaying the parsed data
-    for (const auto& info : uniqueData) {
-        //cout << "Food: " << info.food << ", Measure: " << info.measure << ", Grams: " << info.grams << ", Calories: " << info.calories << ", Protein: " << info.protein << ", Fat: " << info.fat << ", SatFat: " << info.satFat << ", Fiber: " << info.fiber << ", Carbs: " << info.carbs << ", Category: " << info.category << endl;
-        cout << setw(40) << left << info.food << setw(10) << left << info.measure << setw(10) << left << info.grams << setw(10) << left << info.calories << setw(10) << left << info.protein << setw(10) << left << info.fat << setw(10) << left << info.satFat << setw(10) << left << info.fiber << setw(10) << left << info.carbs << setw(10) << left << info.category << endl;
-
     }
 
     return 0;

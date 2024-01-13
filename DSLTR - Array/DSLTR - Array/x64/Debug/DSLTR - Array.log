@@ -1,0 +1,3 @@
+﻿  DSLTR - Array.cpp
+D:\yyun\Documents\GitHub\DSLTR\DSLTR - Array\DSLTR - Array\DSLTR - Array.cpp(179,11): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  DSLTR - Array.vcxproj -> D:\yyun\Documents\GitHub\DSLTR\DSLTR - Array\x64\Debug\DSLTR - Array.exe
