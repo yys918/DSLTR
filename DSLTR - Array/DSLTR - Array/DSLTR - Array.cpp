@@ -7,6 +7,7 @@
 #include <string>
 #include <algorithm>
 #include <iomanip>
+#include <regex>
 #include <chrono>    
 
 using namespace std;
@@ -57,7 +58,17 @@ double cleanAndConvertToDouble(const string& str) {
 NutrientsInfo parseNutrientsInfo(const vector<string>& tokens) {
     NutrientsInfo info;
     if (tokens.size() >= 10) {
-        info.food = tokens[0];
+        // Clean the food name by removing leading and trailing double quotes
+        if (tokens[0].front() == '"' && tokens[0].back() == '"') {
+            info.food = tokens[0].substr(1, tokens[0].size() - 2);
+        }
+        else if (tokens[0].front() == '(' && tokens[0].back() == ')') {
+            info.food = tokens[0].substr(1, tokens[0].size() - 2);
+        }
+        else {
+            info.food = tokens[0];
+        }
+
         info.measure = tokens[1];
         info.grams = cleanAndConvertToDouble(tokens[2]);
         info.calories = cleanAndConvertToDouble(tokens[3]);
@@ -66,7 +77,14 @@ NutrientsInfo parseNutrientsInfo(const vector<string>& tokens) {
         info.satFat = cleanAndConvertToDouble(tokens[6]);
         info.fiber = cleanAndConvertToDouble(tokens[7]);
         info.carbs = cleanAndConvertToDouble(tokens[8]);
-        info.category = tokens[9];
+        // Check if the category is surrounded by double quotes
+        if (tokens[9].front() == '"' && tokens[9].back() == '"') {
+            // Remove the double quotes from the category
+            info.category = tokens[9].substr(1, tokens[9].size() - 2);
+        }
+        else {
+            info.category = tokens[9];
+        }
     }
     return info;
 }
@@ -80,20 +98,27 @@ vector<string> splitCSV(const string& s, char delimiter) {
     string currentToken;
 
     while (getline(ss, token, delimiter)) {
-        // Check if the token contains an opening quote
-        if (!token.empty() && token.front() == '"') {
-            inQuotedString = true;
-            currentToken = token;
-            continue;
+        if (!inQuotedString) {
+            size_t quoteCount = count(token.begin(), token.end(), '"');
+            if (quoteCount % 2 != 0) {
+                // Odd number of quotes indicates the start of a quoted string
+                inQuotedString = true;
+                currentToken = token;
+                continue;
+            }
         }
 
-        // If we're in a quoted string, append the token until we find the closing quote
         if (inQuotedString) {
             currentToken += (delimiter + token);
 
             // Check if the current token ends with a closing quote
-            if (token.back() == '"') {
+            size_t lastQuotePos = currentToken.find_last_of('"');
+            if (lastQuotePos != string::npos && lastQuotePos == currentToken.size() - 1) {
                 inQuotedString = false;
+
+                // Remove the surrounding quotes and handle escaped quotes
+                regex pattern("\"\"");
+                currentToken = regex_replace(currentToken.substr(1, currentToken.size() - 2), pattern, "\"");
                 tokens.push_back(currentToken);
             }
         }
@@ -120,11 +145,24 @@ void trimSpaces(vector<string>& tokens) {
 
 // Function to perform data cleaning operations
 void cleanData(vector<NutrientsInfo>& data) {
+    const string WHITESPACE = " \t"; // Define a constant for whitespace characters
+
     // Remove leading and trailing spaces from all strings
     for (auto& entry : data) {
-        entry.food.erase(remove(entry.food.begin(), entry.food.end(), ' '), entry.food.end());
-        entry.measure.erase(remove(entry.measure.begin(), entry.measure.end(), ' '), entry.measure.end());
-        entry.category.erase(remove(entry.category.begin(), entry.category.end(), ' '), entry.category.end());
+        // Format and trim spaces for food
+        size_t foodStart = entry.food.find_first_not_of(WHITESPACE);
+        size_t foodEnd = entry.food.find_last_not_of(WHITESPACE);
+        entry.food = (foodStart != string::npos) ? entry.food.substr(foodStart, foodEnd - foodStart + 1) : "";
+
+        // Format and trim spaces for measure
+        size_t measureStart = entry.measure.find_first_not_of(WHITESPACE);
+        size_t measureEnd = entry.measure.find_last_not_of(WHITESPACE);
+        entry.measure = (measureStart != string::npos) ? entry.measure.substr(measureStart, measureEnd - measureStart + 1) : "";
+
+        // Format and trim spaces for category
+        size_t categoryStart = entry.category.find_first_not_of(WHITESPACE);
+        size_t categoryEnd = entry.category.find_last_not_of(WHITESPACE);
+        entry.category = (categoryStart != string::npos) ? entry.category.substr(categoryStart, categoryEnd - categoryStart + 1) : "";
     }
 
     // Remove rows with missing values (empty strings)
@@ -142,20 +180,16 @@ void cleanData(vector<NutrientsInfo>& data) {
     }
 }
 
-// Function to check if a row already exists in the dataset
-bool isDuplicate(const vector<NutrientsInfo>& data, const NutrientsInfo& info) {
-    return find_if(data.begin(), data.end(),
-        [&info](const NutrientsInfo& entry) {
-            return (entry.food == info.food && entry.measure == info.measure);
-        }) != data.end();
-}
-
 void displayData(const vector<string>& headers, const vector<NutrientsInfo>& data) {
     // Print headers
     int i = 0;
     for (const auto& header : headers) {
         if (i == 0) {
-            cout << setw(40) << left << header;
+            cout << setw(45) << left << header;
+            i++;
+        }
+        else if (i == 1) {
+            cout << setw(15) << left << header;
             i++;
         }
         else {
@@ -169,7 +203,7 @@ void displayData(const vector<string>& headers, const vector<NutrientsInfo>& dat
     // Displaying the parsed data
     for (const auto& info : data) {
         //cout << "Food: " << info.food << ", Measure: " << info.measure << ", Grams: " << info.grams << ", Calories: " << info.calories << ", Protein: " << info.protein << ", Fat: " << info.fat << ", SatFat: " << info.satFat << ", Fiber: " << info.fiber << ", Carbs: " << info.carbs << ", Category: " << info.category << endl;
-        cout << setw(40) << left << info.food << setw(10) << left << info.measure << setw(10) << left << info.grams << setw(10) << left << info.calories << setw(10) << left << info.protein << setw(10) << left << info.fat << setw(10) << left << info.satFat << setw(10) << left << info.fiber << setw(10) << left << info.carbs << setw(10) << left << info.category << endl;
+        cout << setw(40) << left << info.food << setw(15) << left << info.measure << setw(10) << left << info.grams << setw(10) << left << info.calories << setw(10) << left << info.protein << setw(10) << left << info.fat << setw(10) << left << info.satFat << setw(10) << left << info.fiber << setw(10) << left << info.carbs << setw(10) << left << info.category << endl;
 
     }
 }
@@ -247,7 +281,7 @@ void selectionSort(vector<NutrientsInfo>& data, bool ascending, int column) {
         }
 
         // Swap the found element with the first element
-        std::swap(data[indexToCompare], data[i]);
+        swap(data[indexToCompare], data[i]);
     }
 }
 
@@ -261,8 +295,7 @@ int main() {
     }
 
     string line;
-    vector<NutrientsInfo> originalData;
-    vector<NutrientsInfo> uniqueData;
+    vector<NutrientsInfo> data;
     vector<string> headers; // Store headers separately
 
     // Read the headers
@@ -281,18 +314,13 @@ int main() {
 
     while (getline(file, line)) {
 
+        // Read the entire line and then split it
         vector<string> tokens = splitCSV(line, ',');
 
         // Parse NutrientsInfo
         NutrientsInfo info = parseNutrientsInfo(tokens);
 
-        // Check if the row is unique before adding it to uniqueData
-        if (!isDuplicate(originalData, info)) {
-            uniqueData.push_back(info);
-        }
-
-        // Always add the row to originalData
-        originalData.push_back(info);
+        data.push_back(info);
     }
 
     // Check for end-of-file or failure after the loop
@@ -304,22 +332,32 @@ int main() {
     file.close();
 
     // Perform data cleaning operations
-    cleanData(uniqueData);
+    cleanData(data);
 
-    int num, column;
+    int num, column, choice;
     bool ascending;
 
     cout << "What sorting algorithm do you want to use?\n"
         << "1. Insertion Sort\n2. Selection Sort\n3. Bubble Sort\nChoice:  ";
     cin >> num;
 
-    cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. fat\n7. satFat\n8. fiber\n9. carbs\nChoice: ";
+    cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. Fat\n7. Sat. fat\n8. Fiber\n9. Carbs\n10. Category\nChoice: ";
     cin >> column;
     column = column;
 
     cout << "Enter sorting order\n1. Descending\n2. Ascending\nChoice: ";
-    cin >> ascending;
-    ascending = ascending - 1;
+    cin >> choice;
+    if (choice == 1) {
+        ascending = false;
+    }
+    else if (choice == 2) {
+        ascending = true;
+    }
+    else {
+        cout << "Please enter a valid chioce." << endl;
+        return 1;
+    }
+    cout << ascending << endl;
 
     if (num == 1) {
         auto start = high_resolution_clock::now();
@@ -333,8 +371,8 @@ int main() {
     else if (num == 2) {
         auto start = high_resolution_clock::now();
 
-        selectionSort(uniqueData, ascending, column);
-        displayData(headers, uniqueData);
+        selectionSort(data, ascending, column);
+        displayData(headers, data);
 
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop - start);
