@@ -384,6 +384,57 @@ void insertionSort(vector<NutrientsInfo>& data, bool ascending, int column) {
     }
 }
 
+bool compare(const NutrientsInfo& a, const NutrientsInfo& b, int column, bool ascending) {
+    switch (column) {
+    case 1:  // Sorting based on food name
+        return (ascending) ? (a.food > b.food) : (a.food < b.food);
+    case 2:  // Sorting based on measure
+        return (ascending) ? (a.measure > b.measure) : (a.measure < b.measure);
+    case 3:  // Sorting based on grams
+        return (ascending) ? (a.grams > b.grams) : (a.grams < b.grams);
+    case 4:  // Sorting based on calories
+        return (ascending) ? (a.calories > b.calories) : (a.calories < b.calories);
+    case 5:  // Sorting based on protein
+        return (ascending) ? (a.protein > b.protein) : (a.protein < b.protein);
+    case 6:  // Sorting based on fat
+        return (ascending) ? (a.fat > b.fat) : (a.fat < b.fat);
+    case 7:  // Sorting based on saturated fat
+        return (ascending) ? (a.satFat > b.satFat) : (a.satFat < b.satFat);
+    case 8:  // Sorting based on fiber
+        return (ascending) ? (a.fiber > b.fiber) : (a.fiber < b.fiber);
+    case 9:  // Sorting based on carbs
+        return (ascending) ? (a.carbs > b.carbs) : (a.carbs < b.carbs);
+    case 10: // Sorting based on category
+        return (ascending) ? (a.category > b.category) : (a.category < b.category);
+    default:
+        return false;  // Handle unsupported column
+    }
+}
+
+// Bubble sort implementation
+void bubbleSort(vector<NutrientsInfo>& data, bool ascending, int column) {
+    int n = data.size();
+    bool swapped;
+
+    for (int i = 0; i < n - 1; i++) {
+        swapped = false;
+
+        for (int j = 0; j < n - i - 1; j++) {
+            // Use the compare function for better readability
+            if (compare(data[j], data[j + 1], column, ascending)) {
+                swap(data[j], data[j + 1]);
+                swapped = true;
+            }
+        }
+
+        // If no swaps occurred, the array is already sorted
+        if (!swapped) {
+            break;
+        }
+    }
+}
+
+
 int main() {
     // Open the CSV file
     ifstream file("C:\\Users\\Natalie\\OneDrive - Asia Pacific University\\Documents\\APU\\Y2S2\\DSTR (C++)\\ASMT\\Nutrients_Info.csv");
@@ -433,68 +484,75 @@ int main() {
     // Perform data cleaning operations
     cleanData(data);
 
-    while (true) {
 
-        int num, column, choice;
-        bool ascending;
+    int num, column, choice;
+    bool ascending;
 
-        cout << "What sorting algorithm do you want to use?\n"
-            << "1. Insertion Sort\n2. Selection Sort\n3. Bubble Sort\nChoice:  ";
-        cin >> num;
+    cout << "What sorting algorithm do you want to use?\n"
+        << "1. Insertion Sort\n2. Selection Sort\n3. Bubble Sort\nChoice:  ";
+    cin >> num;
 
-        cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. Fat\n7. Sat. fat\n8. Fiber\n9. Carbs\n10. Category\nChoice: ";
-        cin >> column;
-        column = column;
+    cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. Fat\n7. Sat. fat\n8. Fiber\n9. Carbs\n10. Category\nChoice: ";
+    cin >> column;
+    column = column;
 
-        cout << "Enter sorting order\n1. Descending\n2. Ascending\nChoice: ";
-        cin >> choice;
-        if (choice == 1) {
-            ascending = false;
-        }
-        else if (choice == 2) {
-            ascending = true;
-        }
-        else {
-            cout << "Please enter a valid chioce." << endl;
-            return 1;
-        }
-        cout << ascending << endl;
-
-        if (num == 1) {
-            auto start = high_resolution_clock::now();
-
-            insertionSort(data, ascending, column);
-            displayData(headers, data);
-
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<milliseconds>(stop - start);
-            cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
-
-        }
-
-        else if (num == 2) {
-            auto start = high_resolution_clock::now();
-
-            selectionSort(data, ascending, column);
-            displayData(headers, data);
-
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<milliseconds>(stop - start);
-            cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
-        }
-
-        else if (num == 3) {
-            auto start = high_resolution_clock::now();
-
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<milliseconds>(stop - start);
-            cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
-        }
-
-        else {
-            cout << "Please enter a valid input";
-        }
+    cout << "Enter sorting order\n1. Descending\n2. Ascending\nChoice: ";
+    cin >> choice;
+    if (choice == 1) {
+        ascending = false;
     }
+    else if (choice == 2) {
+        ascending = true;
+    }
+    else {
+        cout << "Please enter a valid chioce." << endl;
+        return 1;
+    }
+    cout << ascending << endl;
+
+    if (num == 1) {
+        auto start = high_resolution_clock::now();
+
+        insertionSort(data, ascending, column);
+        displayData(headers, data);
+
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop - start);
+        cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
+        cout << endl;
+
+    }
+
+    else if (num == 2) {
+        auto start = high_resolution_clock::now();
+
+        selectionSort(data, ascending, column);
+        displayData(headers, data);
+
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop - start);
+        cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
+        cout << endl;
+
+    }
+
+    else if (num == 3) {
+        auto start = high_resolution_clock::now();
+
+        bubbleSort(data, ascending, column);
+        displayData(headers, data);
+
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop - start);
+        cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
+        cout << endl;
+
+    }
+
+    else {
+        cout << "Please enter a valid input";
+    }
+    
 
     return 0;
 }

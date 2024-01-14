@@ -404,53 +404,64 @@ int main() {
 
     cleanData(head);
 
-    int num, column, choice;
-    bool ascending;
+    while (true) {
 
-    cout << "What sorting algorithm do you want to use?\n"
-        << "1. Insertion Sort\n2. Selection Sort\n3. Bubble Sort\nChoice:  ";
-    cin >> num;
+        int num, column, choice;
+        bool ascending;
 
-    cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. Fat\n7. Sat. fat\n8. Fiber\n9. Carbs\n10. Category\nChoice: ";
-    cin >> column;
-    column = column;
+        cout << "What sorting algorithm do you want to use?\n"
+            << "1. Insertion Sort\n2. Selection Sort\n3. Bubble Sort\nChoice:  ";
+        cin >> num;
 
-    cout << "Enter sorting order\n1. Descending\n2. Ascending\nChoice: ";
-    cin >> choice;
-    if (choice == 1) {
-        ascending = false;
+        cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. Fat\n7. Sat. fat\n8. Fiber\n9. Carbs\n10. Category\nChoice: ";
+        cin >> column;
+        column = column;
+
+        cout << "Enter sorting order\n1. Descending\n2. Ascending\nChoice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            ascending = false;
+        }
+        else if (choice == 2) {
+            ascending = true;
+        }
+        else {
+            cout << "Please enter a valid choice." << endl;
+            return 1;
+        }
+
+        if (num == 1) {
+            auto start = high_resolution_clock::now();
+
+            insertionSort(head, ascending, column);
+            displayData(headers, head);
+
+            auto stop = high_resolution_clock::now();
+            auto duration = duration_cast<milliseconds>(stop - start);
+            cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
+
+        }
+        else if (num == 2) {
+            auto start = high_resolution_clock::now();
+
+            selectionSort(head, ascending, column);
+            displayData(headers, head);
+
+            auto stop = high_resolution_clock::now();
+            auto duration = duration_cast<milliseconds>(stop - start);
+            cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
+
+        }
+        // Add similar blocks for other sorting algorithms
     }
-    else if (choice == 2) {
-        ascending = true;
-    }
-    else {
-        cout << "Please enter a valid choice." << endl;
-        return 1;
-    }
-
-    if (num == 2) {
-        auto start = high_resolution_clock::now();
-        selectionSort(head, ascending, column);
-        displayData(headers, head);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<milliseconds>(stop - start);
-        cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
-    }else if (num == 1) {
-        auto start = high_resolution_clock::now();
-        insertionSort(head, ascending, column);
-        displayData(headers, head);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<milliseconds>(stop - start);
-        cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
-    }
-    // Add similar blocks for other sorting algorithms
-
-    // Release memory allocated for the linked list
+        // Release memory allocated for the linked list
     while (head != nullptr) {
         NutrientsInfo* temp = head;
         head = head->next;
         delete temp;
     }
+    
 
     return 0;
 }
