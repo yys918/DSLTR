@@ -437,7 +437,7 @@ void bubbleSort(vector<NutrientsInfo>& data, bool ascending, int column) {
 
 int main() {
     // Open the CSV file
-    ifstream file("C:\\Users\\Natalie\\OneDrive - Asia Pacific University\\Documents\\APU\\Y2S2\\DSTR (C++)\\ASMT\\Nutrients_Info.csv");
+    ifstream file("D:\\yyun\\Downloads\\Nutrients_Info.csv");
 
     if (!file.is_open()) {
         cout << "Error opening file!" << endl;
@@ -491,10 +491,16 @@ int main() {
     cout << "What sorting algorithm do you want to use?\n"
         << "1. Insertion Sort\n2. Selection Sort\n3. Bubble Sort\nChoice:  ";
     cin >> num;
+    if (num != 1 && num != 2 && num != 3) {
+        cout << "Please select a sorting algorithm. " << endl;
+    }
 
     cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. Fat\n7. Sat. fat\n8. Fiber\n9. Carbs\n10. Category\nChoice: ";
     cin >> column;
-    column = column;
+    if (column != 1 && column != 2 && column != 3 && column != 4 && column != 5 && column != 6 && column != 7 && column != 8 && column != 9 && column != 10) {
+        cout << "Please select a valid column number. " << endl;
+        return 1;
+    }
 
     cout << "Enter sorting order\n1. Descending\n2. Ascending\nChoice: ";
     cin >> choice;
@@ -553,7 +559,6 @@ int main() {
         cout << "Please enter a valid input";
     }
     
-
     return 0;
 }
 

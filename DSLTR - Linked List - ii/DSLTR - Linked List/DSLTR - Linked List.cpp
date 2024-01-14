@@ -159,6 +159,12 @@ void cleanData(NutrientsInfo*& head) {
         size_t categoryEnd = current->category.find_last_not_of(WHITESPACE);
         current->category = (categoryStart != string::npos) ? current->category.substr(categoryStart, categoryEnd - categoryStart + 1) : "";
 
+        // Convert to lowercase
+        transform(current->food.begin(), current->food.end(), current->food.begin(), ::tolower);
+        transform(current->measure.begin(), current->measure.end(), current->measure.begin(), ::tolower);
+        transform(current->category.begin(), current->category.end(), current->category.begin(), ::tolower);
+
+
         // Move to the next node in the linked list
         current = current->next;
     }
@@ -464,7 +470,7 @@ void bubbleSort(NutrientsInfo*& head, bool ascendingOrder, int sortColumn) {
 
 
 int main() {
-    ifstream file("C:\\Users\\Natalie\\OneDrive - Asia Pacific University\\Documents\\APU\\Y2S2\\DSTR (C++)\\ASMT\\Nutrients_Info.csv");
+    ifstream file("D:\\yyun\\Downloads\\Nutrients_Info.csv");
 
     if (!file.is_open()) {
         cout << "Error opening file!" << endl;
@@ -512,10 +518,17 @@ int main() {
         cout << "What sorting algorithm do you want to use?\n"
             << "1. Insertion Sort\n2. Selection Sort\n3. Bubble Sort\nChoice:  ";
         cin >> num;
+        if (num != 1 && num != 2 && num != 3) {
+            cout << "Please select a sorting algorithm. " << endl;
+            continue;
+        }
 
         cout << "Enter the column number to sort (1-9)\n1. Food Name\n2. Measure\n3. Grams\n4. Calories\n5. Protein\n6. Fat\n7. Sat. fat\n8. Fiber\n9. Carbs\n10. Category\nChoice: ";
         cin >> column;
-        column = column;
+        if (column != 1 && column != 2 && column != 3 && column != 4 && column != 5 && column != 6 && column != 7 && column !=  8 && column != 9 && column != 10) {
+            cout << "Please select a valid column number. " << endl;
+            continue;
+        }
 
         cout << "Enter sorting order\n1. Descending\n2. Ascending\nChoice: ";
         cin >> choice;
@@ -527,7 +540,7 @@ int main() {
         }
         else {
             cout << "Please enter a valid choice." << endl;
-            return 1;
+            continue;
         }
 
         if (num == 1) {
@@ -560,15 +573,14 @@ int main() {
             auto duration = duration_cast<milliseconds>(stop - start);
             cout << "Sorting time: " << duration.count() << " milliseconds" << endl;
         }
-        // Add similar blocks for other sorting algorithms
     }
+
     // Release memory allocated for the linked list
     while (head != nullptr) {
         NutrientsInfo* temp = head;
         head = head->next;
         delete temp;
     }
-    
 
     return 0;
 }
